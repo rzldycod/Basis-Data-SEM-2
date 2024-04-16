@@ -1,0 +1,605 @@
+Tugas Basis Data 1 - Rizaldy Rafa Akhmad	
+
+1. Membuat database baru dengan nama dbpegawai =============================================================================================
+
+MariaDB [(none)]> create database dbpegawai;
+Query OK, 1 row affected (0.002 sec)
+
+2. Masuk ke dbpegawai dengan perintah USE =============================================================================================
+
+MariaDB [(none)]> use dbpegawai;
+Database changed
+MariaDB [dbpegawai]>
+
+3. Buat tabel divisi dan menampilkan deskripsi tabel divisi =============================================================================================
+
+MariaDB [dbpegawai]> create table divisi (
+    -> id int primary key auto_increment,
+    -> nama varchar(30) not null unique);
+Query OK, 0 rows affected (0.030 sec)
+
+MariaDB [dbpegawai]> desc divisi;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.017 sec)
+
+4. Buat tabel jabatan dan menampilkan deskripsi tabel jabatan =============================================================================================
+
+MariaDB [dbpegawai]> create table jabatan (
+    -> id int primary key auto_increment,
+    -> nama varchar(30) not null unique);
+Query OK, 0 rows affected (0.016 sec)
+
+MariaDB [dbpegawai]> desc jabatan;
++-------+-------------+------+-----+---------+----------------+
+| Field | Type        | Null | Key | Default | Extra          |
++-------+-------------+------+-----+---------+----------------+
+| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
+| nama  | varchar(30) | NO   | UNI | NULL    |                |
++-------+-------------+------+-----+---------+----------------+
+2 rows in set (0.009 sec)
+
+5. Buat tabel pegawai dan menampilkan deskripsi tabel pegawai =============================================================================================
+
+MariaDB [dbpegawai]> create table pegawai (
+    -> id int primary key auto_increment,
+    -> nip char(5) not null unique,
+    -> nama varchar(30) not null,
+    -> gender enum('Laki-laki', 'Perempuan') not null,
+    -> tmp_lahir varchar(30) not null,
+    -> tgl_lahir date not null,
+    -> iddivisi int not null,
+    -> idjabatan int not null,
+    -> alamat text,
+    -> foreign key (iddivisi) references divisi(id),
+    -> foreign key (idjabatan) references jabatan(id)
+    -> );
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [dbpegawai]> desc pegawai;
++-----------+-------------------------------+------+-----+---------+----------------+
+| Field     | Type                          | Null | Key | Default | Extra          |
++-----------+-------------------------------+------+-----+---------+----------------+
+| id        | int(11)                       | NO   | PRI | NULL    | auto_increment |
+| nip       | char(5)                       | NO   | UNI | NULL    |                |
+| nama      | varchar(30)                   | NO   |     | NULL    |                |
+| gender    | enum('Laki-laki','Perempuan') | NO   |     | NULL    |                |
+| tmp_lahir | varchar(30)                   | NO   |     | NULL    |                |
+| tgl_lahir | date                          | NO   |     | NULL    |                |
+| iddivisi  | int(11)                       | NO   | MUL | NULL    |                |
+| idjabatan | int(11)                       | NO   | MUL | NULL    |                |
+| alamat    | text                          | YES  |     | NULL    |                |
++-----------+-------------------------------+------+-----+---------+----------------+
+9 rows in set (0.015 sec)
+
+6. Menampilkan tabel tabel yg ada di dbpegawai =============================================================================================
+
+MariaDB [dbpegawai]> show tables;
++---------------------+
+| Tables_in_dbpegawai |
++---------------------+
+| divisi              |
+| jabatan             |
+| pegawai             |
++---------------------+
+3 rows in set (0.001 sec)
+
+7. Input data divisi dan menampilkan seluruh data divisi =============================================================================================
+
+MariaDB [dbpegawai]> insert into divisi
+    -> values ('','SDM'), ('','Keuangan'),('','Marketing'),('','IT');
+Query OK, 4 rows affected, 4 warnings (0.033 sec)
+Records: 4  Duplicates: 0  Warnings: 4
+
+MariaDB [dbpegawai]> select * from divisi;
++----+-----------+
+| id | nama      |
++----+-----------+
+|  4 | IT        |
+|  2 | Keuangan  |
+|  3 | Marketing |
+|  1 | SDM       |
++----+-----------+
+4 rows in set (0.001 sec)
+
+8. Input data jabatan dan menampilkan seluruh data jabatan =============================================================================================
+
+MariaDB [dbpegawai]> insert into jabatan
+    -> values ('','Direktur'), ('','Manajer'),('','Asisten Manajer'),('','Staff');
+Query OK, 4 rows affected, 4 warnings (0.004 sec)
+Records: 4  Duplicates: 0  Warnings: 4
+
+MariaDB [dbpegawai]> select * from jabatan;
++----+-----------------+
+| id | nama            |
++----+-----------------+
+|  3 | Asisten Manajer |
+|  1 | Direktur        |
+|  2 | Manajer         |
+|  4 | Staff           |
++----+-----------------+
+4 rows in set (0.001 sec)
+
+9. Input 20 Orang Pegawai ( 1 divisi 5 orang, untuk gender dan jabatan diacak) dan menampilkan data tabel pegawai =========================================================
+
+MariaDB [dbpegawai]> insert into pegawai
+    -> (nip,nama,gender,tmp_lahir,tgl_lahir,iddivisi,idjabatan,alamat) values
+    -> ('1001', 'Rizaldy Rafa Akhmad', 'Laki-laki', 'Tangerang', '1999-01-09', 4, 4, 'Depok'),
+    -> ('1002', 'Siti Nurul', 'Perempuan', 'Jakarta', '1999-05-15', 1, 2, 'Jakarta'),
+    -> ('1003', 'Ahmad Fadil', 'Laki-Laki', 'Bandung', '2000-11-20', 2, 3, 'Bandung'),
+    -> ('1004', 'Dewi Lestari', 'Perempuan', 'Surabaya', '1998-09-10', 3, 4, 'Surabaya'),
+    -> ('1005', 'Budi Santoso', 'Laki-Laki', 'Semarang', '1995-07-03', 4, 1, 'Semarang'),
+    -> ('1006', 'Rini Indriani', 'Perempuan', 'Yogyakarta', '1997-12-25', 1, 2, 'Yogyakarta'),
+    -> ('1007', 'Firman Maulana', 'Laki-Laki', 'Medan', '1996-04-18', 2, 3, 'Medan'),
+    -> ('1008', 'Anisa Putri', 'Perempuan', 'Palembang', '2002-08-29', 3, 4, 'Palembang'),
+    -> ('1009', 'Dedi Wahyudi', 'Laki-Laki', 'Makassar', '2001-10-05', 4, 1, 'Makassar'),
+    -> ('1010', 'Euis Rosita', 'Perempuan', 'Padang', '1994-06-12', 1, 2, 'Padang'),
+    -> ('1011', 'Andi Saputra', 'Laki-Laki', 'Balikpapan', '1993-02-28', 2, 3, 'Balikpapan'),
+    -> ('1012', 'Rina Agustina', 'Perempuan', 'Pekanbaru', '1990-11-08', 3, 4, 'Pekanbaru'),
+    -> ('1013', 'Fahmi Rahman', 'Laki-Laki', 'Pontianak', '1992-07-17', 4, 1, 'Pontianak'),
+    -> ('1014', 'Tuti Wulandari', 'Perempuan', 'Ambon', '1988-09-22', 1, 2, 'Ambon'),
+    -> ('1015', 'Rizki Firmansyah', 'Laki-Laki', 'Jayapura', '1991-03-05', 2, 3, 'Jayapura'),
+    -> ('1016', 'Lia Rahmawati', 'Perempuan', 'Manado', '1989-12-10', 3, 4, 'Manado'),
+    -> ('1017', 'Surya Pratama', 'Laki-Laki', 'Denpasar', '1999-08-15', 4, 1, 'Denpasar'),
+    -> ('1018', 'Dina Fitriana', 'Perempuan', 'Mataram', '2003-05-20', 1, 2, 'Mataram'),
+    -> ('1019', 'Indra Kurniawan', 'Laki-Laki', 'Bandar Lampung', '2005-01-25', 2, 3, 'Bandar Lampung'),
+    -> ('1020', 'Maya Anggraeni', 'Perempuan', 'Ternate', '2006-06-30', 3, 4, 'Ternate');
+Query OK, 20 rows affected (0.021 sec)
+Records: 20  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> select * from pegawai;
++----+------+---------------------+-----------+----------------+------------+----------+-----------+----------------+
+| id | nip  | nama                | gender    | tmp_lahir      | tgl_lahir  | iddivisi | idjabatan | alamat         |
++----+------+---------------------+-----------+----------------+------------+----------+-----------+----------------+
+|  1 | 1001 | Rizaldy Rafa Akhmad | Laki-laki | Tangerang      | 1999-01-09 |        4 |         4 | Depok          |
+|  2 | 1002 | Siti Nurul          | Perempuan | Jakarta        | 1999-05-15 |        1 |         2 | Jakarta        |
+|  3 | 1003 | Ahmad Fadil         | Laki-laki | Bandung        | 2000-11-20 |        2 |         3 | Bandung        |
+|  4 | 1004 | Dewi Lestari        | Perempuan | Surabaya       | 1998-09-10 |        3 |         4 | Surabaya       |
+|  5 | 1005 | Budi Santoso        | Laki-laki | Semarang       | 1995-07-03 |        4 |         1 | Semarang       |
+|  6 | 1006 | Rini Indriani       | Perempuan | Yogyakarta     | 1997-12-25 |        1 |         2 | Yogyakarta     |
+|  7 | 1007 | Firman Maulana      | Laki-laki | Medan          | 1996-04-18 |        2 |         3 | Medan          |
+|  8 | 1008 | Anisa Putri         | Perempuan | Palembang      | 2002-08-29 |        3 |         4 | Palembang      |
+|  9 | 1009 | Dedi Wahyudi        | Laki-laki | Makassar       | 2001-10-05 |        4 |         1 | Makassar       |
+| 10 | 1010 | Euis Rosita         | Perempuan | Padang         | 1994-06-12 |        1 |         2 | Padang         |
+| 11 | 1011 | Andi Saputra        | Laki-laki | Balikpapan     | 1993-02-28 |        2 |         3 | Balikpapan     |
+| 12 | 1012 | Rina Agustina       | Perempuan | Pekanbaru      | 1990-11-08 |        3 |         4 | Pekanbaru      |
+| 13 | 1013 | Fahmi Rahman        | Laki-laki | Pontianak      | 1992-07-17 |        4 |         1 | Pontianak      |
+| 14 | 1014 | Tuti Wulandari      | Perempuan | Ambon          | 1988-09-22 |        1 |         2 | Ambon          |
+| 15 | 1015 | Rizki Firmansyah    | Laki-laki | Jayapura       | 1991-03-05 |        2 |         3 | Jayapura       |
+| 16 | 1016 | Lia Rahmawati       | Perempuan | Manado         | 1989-12-10 |        3 |         4 | Manado         |
+| 17 | 1017 | Surya Pratama       | Laki-laki | Denpasar       | 1999-08-15 |        4 |         1 | Denpasar       |
+| 18 | 1018 | Dina Fitriana       | Perempuan | Mataram        | 2003-05-20 |        1 |         2 | Mataram        |
+| 19 | 1019 | Indra Kurniawan     | Laki-laki | Bandar Lampung | 2005-01-25 |        2 |         3 | Bandar Lampung |
+| 20 | 1020 | Maya Anggraeni      | Perempuan | Ternate        | 2006-06-30 |        3 |         4 | Ternate        |
++----+------+---------------------+-----------+----------------+------------+----------+-----------+----------------+
+20 rows in set (0.000 sec)
+
+10. Ubah data 5 orang pegawai (dengan ketentuan ubah 3 kolom(bebas)) =============================================================================================
+
+MariaDB [dbpegawai]> update pegawai
+    -> set tmp_lahir = 'Tangerang', idjabatan = 3, alamat = 'Jakarta' where id in (8, 14, 17, 19, 20);
+Query OK, 5 rows affected (0.015 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+11. Hapus 2 orang pegawai terakhir =============================================================================================
+
+MariaDB [dbpegawai]> delete from pegawai
+    -> order by id desc limit 2;
+Query OK, 2 rows affected (0.003 sec)
+
+12. Menambahkan kolom Berat Badan pada tabel pegawai dan input data secara random =============================================================================================
+
+MariaDB [dbpegawai]> alter table pegawai
+    -> add column if not exists
+    -> berat_badan float not null;
+Query OK, 0 rows affected (0.021 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> update pegawai
+    -> set berat_badan = floor(rand() * 70) + 30;
+Query OK, 18 rows affected (0.005 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+MariaDB [dbpegawai]> select * from pegawai;
++----+------+---------------------+-----------+------------+------------+----------+-----------+------------+-------------+
+| id | nip  | nama                | gender    | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan |
++----+------+---------------------+-----------+------------+------------+----------+-----------+------------+-------------+
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki | Tangerang  | 1999-01-09 |        4 |         4 | Depok      |          53 |
+| 31 | 1002 | Siti Nurul          | Perempuan | Jakarta    | 1999-05-15 |        1 |         2 | Jakarta    |          48 |
+| 32 | 1003 | Ahmad Fadil         | Laki-laki | Bandung    | 2000-11-20 |        2 |         3 | Bandung    |          53 |
+| 33 | 1004 | Dewi Lestari        | Perempuan | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |
+| 34 | 1005 | Budi Santoso        | Laki-laki | Semarang   | 1995-07-03 |        4 |         1 | Semarang   |          51 |
+| 35 | 1006 | Rini Indriani       | Perempuan | Yogyakarta | 1997-12-25 |        1 |         2 | Yogyakarta |          96 |
+| 36 | 1007 | Firman Maulana      | Laki-laki | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |
+| 37 | 1008 | Anisa Putri         | Perempuan | Tangerang  | 2002-08-29 |        3 |         3 | Jakarta    |          47 |
+| 38 | 1009 | Dedi Wahyudi        | Laki-laki | Makassar   | 2001-10-05 |        4 |         1 | Makassar   |          85 |
+| 39 | 1010 | Euis Rosita         | Perempuan | Padang     | 1994-06-12 |        1 |         2 | Padang     |          43 |
+| 40 | 1011 | Andi Saputra        | Laki-laki | Balikpapan | 1993-02-28 |        2 |         3 | Balikpapan |          72 |
+| 41 | 1012 | Rina Agustina       | Perempuan | Pekanbaru  | 1990-11-08 |        3 |         4 | Pekanbaru  |          59 |
+| 42 | 1013 | Fahmi Rahman        | Laki-laki | Pontianak  | 1992-07-17 |        4 |         1 | Pontianak  |          53 |
+| 43 | 1014 | Tuti Wulandari      | Perempuan | Tangerang  | 1988-09-22 |        1 |         3 | Jakarta    |          56 |
+| 44 | 1015 | Rizki Firmansyah    | Laki-laki | Jayapura   | 1991-03-05 |        2 |         3 | Jayapura   |          92 |
+| 45 | 1016 | Lia Rahmawati       | Perempuan | Manado     | 1989-12-10 |        3 |         4 | Manado     |          52 |
+| 46 | 1017 | Surya Pratama       | Laki-laki | Tangerang  | 1999-08-15 |        4 |         3 | Jakarta    |          96 |
+| 47 | 1018 | Dina Fitriana       | Perempuan | Mataram    | 2003-05-20 |        1 |         2 | Mataram    |          85 |
++----+------+---------------------+-----------+------------+------------+----------+-----------+------------+-------------+
+18 rows in set (0.001 sec)
+
+13. Menggunakan alter table untuk menambahkan kolom umur =============================================================================================
+
+MariaDB [dbpegawai]> alter table pegawai
+    -> add column if not exists
+    -> umur int not null;
+Query OK, 0 rows affected (0.019 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> update pegawai
+    -> set umur = floor(rand() * 40) + 20;
+Query OK, 18 rows affected (0.005 sec)
+Rows matched: 18  Changed: 18  Warnings: 0
+
+MariaDB [dbpegawai]> select * from pegawai;
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Tangerang  | 1999-01-09 |        4 |         2 | Depok      |          53 |   24 |
+| 31 | 1002 | Siti Nurul          | Perempuan     | Jakarta    | 1999-05-15 |        2 |         3 | Jakarta    |          48 |   28 |
+| 32 | 1003 | Ahmad Fadil         | Laki-laki     | Bandung    | 2000-11-20 |        1 |         4 | Bandung    |          53 |   48 |
+| 33 | 1004 | Dewi Lestari        | Perempuan     | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |   55 |
+| 34 | 1005 | Budi Santoso        | Laki-laki     | Semarang   | 1995-07-03 |        2 |         1 | Semarang   |          51 |   33 |
+| 35 | 1006 | Rini Indriani       | Perempuan     | Yogyakarta | 1997-12-25 |        1 |         3 | Yogyakarta |          96 |   20 |
+| 36 | 1007 | Firman Maulana      | Laki-laki     | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |   21 |
+| 37 | 1008 | Anisa Putri         | Perempuan     | Tangerang  | 2002-08-29 |        4 |         2 | Jakarta    |          47 |   27 |
+| 38 | 1009 | Dedi Wahyudi        | Laki-laki     | Makassar   | 2001-10-05 |        2 |         1 | Makassar   |          85 |   51 |
+| 39 | 1010 | Euis Rosita         | Perempuan     | Padang     | 1994-06-12 |        4 |         4 | Padang     |          43 |   35 |
+| 40 | 1011 | Andi Saputra        | Laki-laki     | Balikpapan | 1993-02-28 |        4 |         4 | Balikpapan |          72 |   43 |
+| 41 | 1012 | Rina Agustina       | Perempuan     | Pekanbaru  | 1990-11-08 |        1 |         3 | Pekanbaru  |          59 |   52 |
+| 42 | 1013 | Fahmi Rahman        | Laki-laki     | Pontianak  | 1992-07-17 |        1 |         1 | Pontianak  |          53 |   30 |
+| 43 | 1014 | Tuti Wulandari      | Perempuan     | Tangerang  | 1988-09-22 |        4 |         1 | Jakarta    |          56 |   53 |
+| 44 | 1015 | Rizki Firmansyah    | Laki-laki     | Jayapura   | 1991-03-05 |        1 |         4 | Jayapura   |          92 |   38 |
+| 45 | 1016 | Lia Rahmawati       | Perempuan     | Manado     | 1989-12-10 |        4 |         3 | Manado     |          52 |   50 |
+| 46 | 1017 | Surya Pratama       | Laki-laki     | Tangerang  | 1999-08-15 |        2 |         3 | Jakarta    |          96 |   36 |
+| 47 | 1018 | Dina Fitriana       | Perempuan     | Mataram    | 2003-05-20 |        3 |         4 | Mataram    |          85 |   53 |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+18 rows in set (0.001 sec)
+
+14. Mengubah kolom gender menjadi jenis_kelamin =============================================================================================
+
+MariaDB [dbpegawai]> alter table pegawai
+    -> change column gender jenis_kelamin enum('Laki-laki', 'Perempuan') not null;
+Query OK, 0 rows affected (0.018 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [dbpegawai]> select * from pegawai;
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+
+15. Menampilkan kolom nip, nama, jenis_kelamin dan alamat =============================================================================================
+
+ariaDB [dbpegawai]> select nip, nama, jenis_kelamin, alamat from pegawai;
++------+---------------------+---------------+------------+
+| nip  | nama                | jenis_kelamin | alamat     |
++------+---------------------+---------------+------------+
+| 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Depok      |
+| 1002 | Siti Nurul          | Perempuan     | Jakarta    |
+| 1003 | Ahmad Fadil         | Laki-laki     | Bandung    |
+| 1004 | Dewi Lestari        | Perempuan     | Surabaya   |
+| 1005 | Budi Santoso        | Laki-laki     | Semarang   |
+| 1006 | Rini Indriani       | Perempuan     | Yogyakarta |
+| 1007 | Firman Maulana      | Laki-laki     | Medan      |
+| 1008 | Anisa Putri         | Perempuan     | Jakarta    |
+| 1009 | Dedi Wahyudi        | Laki-laki     | Makassar   |
+| 1010 | Euis Rosita         | Perempuan     | Padang     |
+| 1011 | Andi Saputra        | Laki-laki     | Balikpapan |
+| 1012 | Rina Agustina       | Perempuan     | Pekanbaru  |
+| 1013 | Fahmi Rahman        | Laki-laki     | Pontianak  |
+| 1014 | Tuti Wulandari      | Perempuan     | Jakarta    |
+| 1015 | Rizki Firmansyah    | Laki-laki     | Jayapura   |
+| 1016 | Lia Rahmawati       | Perempuan     | Manado     |
+| 1017 | Surya Pratama       | Laki-laki     | Jakarta    |
+| 1018 | Dina Fitriana       | Perempuan     | Mataram    |
++------+---------------------+---------------+------------+
+18 rows in set (0.001 sec)
+
+16. Menampilkan kolom hanya yg Laki-laki =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where jenis_kelamin like '%Laki-laki';
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Tangerang  | 1999-01-09 |        4 |         4 | Depok      |          53 |   24 |
+| 32 | 1003 | Ahmad Fadil         | Laki-laki     | Bandung    | 2000-11-20 |        2 |         3 | Bandung    |          53 |   48 |
+| 34 | 1005 | Budi Santoso        | Laki-laki     | Semarang   | 1995-07-03 |        4 |         1 | Semarang   |          51 |   33 |
+| 36 | 1007 | Firman Maulana      | Laki-laki     | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |   21 |
+| 38 | 1009 | Dedi Wahyudi        | Laki-laki     | Makassar   | 2001-10-05 |        4 |         1 | Makassar   |          85 |   51 |
+| 40 | 1011 | Andi Saputra        | Laki-laki     | Balikpapan | 1993-02-28 |        2 |         3 | Balikpapan |          72 |   43 |
+| 42 | 1013 | Fahmi Rahman        | Laki-laki     | Pontianak  | 1992-07-17 |        4 |         1 | Pontianak  |          53 |   30 |
+| 44 | 1015 | Rizki Firmansyah    | Laki-laki     | Jayapura   | 1991-03-05 |        2 |         3 | Jayapura   |          92 |   38 |
+| 46 | 1017 | Surya Pratama       | Laki-laki     | Tangerang  | 1999-08-15 |        4 |         3 | Jakarta    |          96 |   36 |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+9 rows in set (0.001 sec)
+
+17. Menampilkan id divisi IT dan jenis_kelamin Perempuan =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where iddivisi = 4 and jenis_kelamin = 'Perempuan';
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| id | nip  | nama           | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat  | berat_badan | umur |
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| 37 | 1008 | Anisa Putri    | Perempuan     | Tangerang | 2002-08-29 |        4 |         2 | Jakarta |          47 |   27 |
+| 39 | 1010 | Euis Rosita    | Perempuan     | Padang    | 1994-06-12 |        4 |         4 | Padang  |          43 |   35 |
+| 43 | 1014 | Tuti Wulandari | Perempuan     | Tangerang | 1988-09-22 |        4 |         1 | Jakarta |          56 |   53 |
+| 45 | 1016 | Lia Rahmawati  | Perempuan     | Manado    | 1989-12-10 |        4 |         3 | Manado  |          52 |   50 |
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+4 rows in set (0.001 sec)
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where iddivisi = (select id from divisi where nama = 'IT')
+    -> and jenis_kelamin = 'Perempuan';
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| id | nip  | nama           | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat  | berat_badan | umur |
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| 37 | 1008 | Anisa Putri    | Perempuan     | Tangerang | 2002-08-29 |        4 |         2 | Jakarta |          47 |   27 |
+| 39 | 1010 | Euis Rosita    | Perempuan     | Padang    | 1994-06-12 |        4 |         4 | Padang  |          43 |   35 |
+| 43 | 1014 | Tuti Wulandari | Perempuan     | Tangerang | 1988-09-22 |        4 |         1 | Jakarta |          56 |   53 |
+| 45 | 1016 | Lia Rahmawati  | Perempuan     | Manado    | 1989-12-10 |        4 |         3 | Manado  |          52 |   50 |
++----+------+----------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+4 rows in set (0.008 sec)
+
+18. Menampilkan data pegawai yg berumur 30 keatas dan lahirnya di kota Jakarta =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where umur > 30 and tmp_lahir = 'Jakarta';
++----+------+---------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| id | nip  | nama          | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat | berat_badan | umur |
++----+------+---------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| 45 | 1016 | Lia Rahmawati | Perempuan     | Jakarta   | 1989-12-10 |        4 |         3 | Manado |          52 |   50 |
++----+------+---------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+1 row in set (0.001 sec)
+
+19. Menampilkan data pegawai dengan klausa key (nip) =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where nip = '1001';
++----+------+---------------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat | berat_badan | umur |
++----+------+---------------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Tangerang | 1999-01-09 |        4 |         2 | Depok  |          53 |   24 |
++----+------+---------------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+1 row in set (0.001 sec)
+
+20. Menampilkan data pegawai dengan klausa non key (jenis_kelamin) =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where jenis_kelamin = 'Perempuan';
++----+------+----------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama           | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+----------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 31 | 1002 | Siti Nurul     | Perempuan     | Jakarta    | 1999-05-15 |        2 |         3 | Jakarta    |          48 |   28 |
+| 33 | 1004 | Dewi Lestari   | Perempuan     | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |   55 |
+| 35 | 1006 | Rini Indriani  | Perempuan     | Yogyakarta | 1997-12-25 |        1 |         3 | Yogyakarta |          96 |   20 |
+| 37 | 1008 | Anisa Putri    | Perempuan     | Tangerang  | 2002-08-29 |        4 |         2 | Jakarta    |          47 |   27 |
+| 39 | 1010 | Euis Rosita    | Perempuan     | Padang     | 1994-06-12 |        4 |         4 | Padang     |          43 |   35 |
+| 41 | 1012 | Rina Agustina  | Perempuan     | Pekanbaru  | 1990-11-08 |        1 |         3 | Pekanbaru  |          59 |   52 |
+| 43 | 1014 | Tuti Wulandari | Perempuan     | Tangerang  | 1988-09-22 |        4 |         1 | Jakarta    |          56 |   53 |
+| 45 | 1016 | Lia Rahmawati  | Perempuan     | Jakarta    | 1989-12-10 |        4 |         3 | Manado     |          52 |   50 |
+| 47 | 1018 | Dina Fitriana  | Perempuan     | Mataram    | 2003-05-20 |        3 |         4 | Mataram    |          85 |   53 |
++----+------+----------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+9 rows in set (0.000 sec)
+
+21. Menampilkan data pegawai dengan klausa in (menyebutkan beberapa nip) =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where nip in ('1018', '1012', '1003');
++----+------+---------------+---------------+-----------+------------+----------+-----------+-----------+-------------+------+
+| id | nip  | nama          | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat    | berat_badan | umur |
++----+------+---------------+---------------+-----------+------------+----------+-----------+-----------+-------------+------+
+| 32 | 1003 | Ahmad Fadil   | Laki-laki     | Bandung   | 2000-11-20 |        1 |         4 | Bandung   |          53 |   48 |
+| 41 | 1012 | Rina Agustina | Perempuan     | Pekanbaru | 1990-11-08 |        1 |         3 | Pekanbaru |          59 |   52 |
+| 47 | 1018 | Dina Fitriana | Perempuan     | Mataram   | 2003-05-20 |        3 |         4 | Mataram   |          85 |   53 |
++----+------+---------------+---------------+-----------+------------+----------+-----------+-----------+-------------+------+
+3 rows in set (0.001 sec)
+
+22. Menampilkan data pegawai dengan klausa not in (menyebutkan tempat lahir) =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> where tmp_lahir not in ('Jakarta', 'Depok', 'Tangerang');
++----+------+------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama             | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 32 | 1003 | Ahmad Fadil      | Laki-laki     | Bandung    | 2000-11-20 |        1 |         4 | Bandung    |          53 |   48 |
+| 33 | 1004 | Dewi Lestari     | Perempuan     | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |   55 |
+| 34 | 1005 | Budi Santoso     | Laki-laki     | Semarang   | 1995-07-03 |        2 |         1 | Semarang   |          51 |   33 |
+| 35 | 1006 | Rini Indriani    | Perempuan     | Yogyakarta | 1997-12-25 |        1 |         3 | Yogyakarta |          96 |   20 |
+| 36 | 1007 | Firman Maulana   | Laki-laki     | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |   21 |
+| 38 | 1009 | Dedi Wahyudi     | Laki-laki     | Makassar   | 2001-10-05 |        2 |         1 | Makassar   |          85 |   51 |
+| 39 | 1010 | Euis Rosita      | Perempuan     | Padang     | 1994-06-12 |        4 |         4 | Padang     |          43 |   35 |
+| 40 | 1011 | Andi Saputra     | Laki-laki     | Balikpapan | 1993-02-28 |        4 |         4 | Balikpapan |          72 |   43 |
+| 41 | 1012 | Rina Agustina    | Perempuan     | Pekanbaru  | 1990-11-08 |        1 |         3 | Pekanbaru  |          59 |   52 |
+| 42 | 1013 | Fahmi Rahman     | Laki-laki     | Pontianak  | 1992-07-17 |        1 |         1 | Pontianak  |          53 |   30 |
+| 44 | 1015 | Rizki Firmansyah | Laki-laki     | Jayapura   | 1991-03-05 |        1 |         4 | Jayapura   |          92 |   38 |
+| 47 | 1018 | Dina Fitriana    | Perempuan     | Mataram    | 2003-05-20 |        3 |         4 | Mataram    |          85 |   53 |
++----+------+------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+12 rows in set (0.001 sec)
+
+23. Menampilkan data dengan ascending =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai order by nama asc;
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 32 | 1003 | Ahmad Fadil         | Laki-laki     | Bandung    | 2000-11-20 |        1 |         4 | Bandung    |          53 |   48 |
+| 40 | 1011 | Andi Saputra        | Laki-laki     | Balikpapan | 1993-02-28 |        4 |         4 | Balikpapan |          72 |   43 |
+| 37 | 1008 | Anisa Putri         | Perempuan     | Tangerang  | 2002-08-29 |        4 |         2 | Jakarta    |          47 |   27 |
+| 34 | 1005 | Budi Santoso        | Laki-laki     | Semarang   | 1995-07-03 |        2 |         1 | Semarang   |          51 |   33 |
+| 38 | 1009 | Dedi Wahyudi        | Laki-laki     | Makassar   | 2001-10-05 |        2 |         1 | Makassar   |          85 |   51 |
+| 33 | 1004 | Dewi Lestari        | Perempuan     | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |   55 |
+| 47 | 1018 | Dina Fitriana       | Perempuan     | Mataram    | 2003-05-20 |        3 |         4 | Mataram    |          85 |   53 |
+| 39 | 1010 | Euis Rosita         | Perempuan     | Padang     | 1994-06-12 |        4 |         4 | Padang     |          43 |   35 |
+| 42 | 1013 | Fahmi Rahman        | Laki-laki     | Pontianak  | 1992-07-17 |        1 |         1 | Pontianak  |          53 |   30 |
+| 36 | 1007 | Firman Maulana      | Laki-laki     | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |   21 |
+| 45 | 1016 | Lia Rahmawati       | Perempuan     | Jakarta    | 1989-12-10 |        4 |         3 | Manado     |          52 |   50 |
+| 41 | 1012 | Rina Agustina       | Perempuan     | Pekanbaru  | 1990-11-08 |        1 |         3 | Pekanbaru  |          59 |   52 |
+| 35 | 1006 | Rini Indriani       | Perempuan     | Yogyakarta | 1997-12-25 |        1 |         3 | Yogyakarta |          96 |   20 |
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Tangerang  | 1999-01-09 |        4 |         2 | Depok      |          53 |   24 |
+| 44 | 1015 | Rizki Firmansyah    | Laki-laki     | Jayapura   | 1991-03-05 |        1 |         4 | Jayapura   |          92 |   38 |
+| 31 | 1002 | Siti Nurul          | Perempuan     | Jakarta    | 1999-05-15 |        2 |         3 | Jakarta    |          48 |   28 |
+| 46 | 1017 | Surya Pratama       | Laki-laki     | Tangerang  | 1999-08-15 |        2 |         3 | Jakarta    |          96 |   36 |
+| 43 | 1014 | Tuti Wulandari      | Perempuan     | Tangerang  | 1988-09-22 |        4 |         1 | Jakarta    |          56 |   53 |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+18 rows in set (0.003 sec)
+
+24. Menampilkan data pegawai dari yg paling gemuk ke yg paling kurus =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai order by berat_badan desc;
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| id | nip  | nama                | jenis_kelamin | tmp_lahir  | tgl_lahir  | iddivisi | idjabatan | alamat     | berat_badan | umur |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+| 35 | 1006 | Rini Indriani       | Perempuan     | Yogyakarta | 1997-12-25 |        1 |         3 | Yogyakarta |          96 |   20 |
+| 46 | 1017 | Surya Pratama       | Laki-laki     | Tangerang  | 1999-08-15 |        2 |         3 | Jakarta    |          96 |   36 |
+| 44 | 1015 | Rizki Firmansyah    | Laki-laki     | Jayapura   | 1991-03-05 |        1 |         4 | Jayapura   |          92 |   38 |
+| 33 | 1004 | Dewi Lestari        | Perempuan     | Surabaya   | 1998-09-10 |        3 |         4 | Surabaya   |          90 |   55 |
+| 36 | 1007 | Firman Maulana      | Laki-laki     | Medan      | 1996-04-18 |        2 |         3 | Medan      |          87 |   21 |
+| 38 | 1009 | Dedi Wahyudi        | Laki-laki     | Makassar   | 2001-10-05 |        2 |         1 | Makassar   |          85 |   51 |
+| 47 | 1018 | Dina Fitriana       | Perempuan     | Mataram    | 2003-05-20 |        3 |         4 | Mataram    |          85 |   53 |
+| 40 | 1011 | Andi Saputra        | Laki-laki     | Balikpapan | 1993-02-28 |        4 |         4 | Balikpapan |          72 |   43 |
+| 41 | 1012 | Rina Agustina       | Perempuan     | Pekanbaru  | 1990-11-08 |        1 |         3 | Pekanbaru  |          59 |   52 |
+| 43 | 1014 | Tuti Wulandari      | Perempuan     | Tangerang  | 1988-09-22 |        4 |         1 | Jakarta    |          56 |   53 |
+| 30 | 1001 | Rizaldy Rafa Akhmad | Laki-laki     | Tangerang  | 1999-01-09 |        4 |         2 | Depok      |          53 |   24 |
+| 32 | 1003 | Ahmad Fadil         | Laki-laki     | Bandung    | 2000-11-20 |        1 |         4 | Bandung    |          53 |   48 |
+| 42 | 1013 | Fahmi Rahman        | Laki-laki     | Pontianak  | 1992-07-17 |        1 |         1 | Pontianak  |          53 |   30 |
+| 45 | 1016 | Lia Rahmawati       | Perempuan     | Jakarta    | 1989-12-10 |        4 |         3 | Manado     |          52 |   50 |
+| 34 | 1005 | Budi Santoso        | Laki-laki     | Semarang   | 1995-07-03 |        2 |         1 | Semarang   |          51 |   33 |
+| 31 | 1002 | Siti Nurul          | Perempuan     | Jakarta    | 1999-05-15 |        2 |         3 | Jakarta    |          48 |   28 |
+| 37 | 1008 | Anisa Putri         | Perempuan     | Tangerang  | 2002-08-29 |        4 |         2 | Jakarta    |          47 |   27 |
+| 39 | 1010 | Euis Rosita         | Perempuan     | Padang     | 1994-06-12 |        4 |         4 | Padang     |          43 |   35 |
++----+------+---------------------+---------------+------------+------------+----------+-----------+------------+-------------+------+
+18 rows in set (0.001 sec)
+
+25. Menampilkan data pegawai paling atas dengan klausa limit, dan paling bawah dengan klausa offset =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai
+    -> limit 5 offset 13;
++----+------+------------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+| id | nip  | nama             | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat   | berat_badan | umur |
++----+------+------------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+| 43 | 1014 | Tuti Wulandari   | Perempuan     | Tangerang | 1988-09-22 |        4 |         1 | Jakarta  |          56 |   53 |
+| 44 | 1015 | Rizki Firmansyah | Laki-laki     | Jayapura  | 1991-03-05 |        1 |         4 | Jayapura |          92 |   38 |
+| 45 | 1016 | Lia Rahmawati    | Perempuan     | Jakarta   | 1989-12-10 |        4 |         3 | Manado   |          52 |   50 |
+| 46 | 1017 | Surya Pratama    | Laki-laki     | Tangerang | 1999-08-15 |        2 |         3 | Jakarta  |          96 |   36 |
+| 47 | 1018 | Dina Fitriana    | Perempuan     | Mataram   | 2003-05-20 |        3 |         4 | Mataram  |          85 |   53 |
++----+------+------------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+5 rows in set (0.001 sec)
+
+26. Menampilkan jumlah pegawai dengan aggregate count =============================================================================================
+
+MariaDB [dbpegawai]> select count(*) AS jumlah_pegawai from pegawai;
++----------------+
+| jumlah_pegawai |
++----------------+
+|             18 |
++----------------+
+1 row in set (0.012 sec)
+
+27. Menampilkan jumlah data pegawai Laki-laki berumur diatas 40 dan berada berjabatan Manager =============================================================================================
+
+
+MariaDB [dbpegawai]> select * from pegawai where jenis_kelamin = 'Laki-laki' and umur > 40 and idjabatan = 2;
++----+------+-------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| id | nip  | nama        | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat  | berat_badan | umur |
++----+------+-------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+| 32 | 1003 | Ahmad Fadil | Laki-laki     | Bandung   | 2000-11-20 |        1 |         2 | Bandung |          53 |   48 |
++----+------+-------------+---------------+-----------+------------+----------+-----------+---------+-------------+------+
+1 row in set (0.001 sec)
+
++-------------+
+| jml_manager |
++-------------+
+|           1 |
++-------------+
+1 row in set (0.001 sec)
+
+28. Menampilkan data pegawai Perempuan berumur dibawah 40 tahun dan berjabatan Staff =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai where jenis_kelamin = 'Perempuan' and umur < 40 and idjabatan = 4;
++----+------+-------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| id | nip  | nama        | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat | berat_badan | umur |
++----+------+-------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+| 39 | 1010 | Euis Rosita | Perempuan     | Padang    | 1994-06-12 |        4 |         4 | Padang |          43 |   35 |
++----+------+-------------+---------------+-----------+------------+----------+-----------+--------+-------------+------+
+1 row in set (0.001 sec)
+
++-----------+
+| jml_staff |
++-----------+
+|         1 |
++-----------+
+1 row in set (0.000 sec)
+
+29. Menampilkan jumlah data pegawai Perempuan =============================================================================================
+
++---------------+
+| jml_perempuan |
++---------------+
+|             9 |
++---------------+
+1 row in set (0.000 sec)
+
+30. Menampilkan jumlah data pegawai yg bekerja di divisi SDM =============================================================================================
+
++---------------+
+| sum(iddivisi) |
++---------------+
+|             5 |
++---------------+
+1 row in set (0.008 sec)
+
+31. Menampilkan data pegawai yg bekerja di divisinya masing masing =============================================================================================
+
++----------+----------------+
+| iddivisi | jumlah_pegawai |
++----------+----------------+
+|        1 |              5 |
+|        2 |              5 |
+|        3 |              2 |
+|        4 |              6 |
++----------+----------------+
+4 rows in set (0.001 sec)
+
+32. Menampilkan jumlah data 10 orang pegawai berdasarkan jenis_kelamin =============================================================================================
+
+MariaDB [dbpegawai]> select jenis_kelamin, count(*) as jml_pegawai from pegawai group by jenis_kelamin having count(*) >= 10;
+Empty set (0.001 sec)
+
+33. Mencari dan menampilkan data pegawai yg namanya berawalan "Muhammad" =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai where nama like '%Muhammad';
+Empty set (0.001 sec)
+
+34. Mencari dan menampilkan data pegawai yg namanya berakhiran dengan "Santoso" =============================================================================================
+
++----+------+--------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+| id | nip  | nama         | jenis_kelamin | tmp_lahir | tgl_lahir  | iddivisi | idjabatan | alamat   | berat_badan | umur |
++----+------+--------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+| 34 | 1005 | Budi Santoso | Laki-laki     | Semarang  | 1995-07-03 |        2 |         1 | Semarang |          51 |   33 |
++----+------+--------------+---------------+-----------+------------+----------+-----------+----------+-------------+------+
+1 row in set (0.001 sec)
+
+35. Mencari dan menampilkan data pegawai yg namanya "Asep" =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai where nama like '%Asep';
+Empty set (0.001 sec)
+
+36. Mencari dan menampilkan data pegawai yg huruf kelima namanya adalah huruf "S" =============================================================================================
+
+MariaDB [dbpegawai]> select * from pegawai where nama like '____S';
+Empty set (0.001 sec)
+
+#CATATAN
+Ada beberapa query/perintah yg saya gabung seperti contoh soal nomor 5 dan 6 di notepad biar cepat dan nggak ribet :D
